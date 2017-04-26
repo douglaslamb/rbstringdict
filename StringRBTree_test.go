@@ -114,3 +114,29 @@ func TestRightRotate(t *testing.T) {
 		t.Errorf("rightRotate failed; left.right = %v; want %v", left.right, node)
 	}
 }
+
+func TestIsBST(t *testing.T) {
+	// not BST
+	tree := &StringRBTree{}
+	root := &StringNode{}
+	root.value = `f`
+	left := &StringNode{}
+	left.value = `z`
+	tree.rootNode = root
+	root.left = left
+	if tree.isBST() {
+		t.Errorf("tree.isBST() = %v; want %v", tree.isBST(), false)
+	}
+
+	// is BST
+	tree = &StringRBTree{}
+	root = &StringNode{}
+	root.value = `f`
+	left = &StringNode{}
+	left.value = `a`
+	tree.rootNode = root
+	root.left = left
+	if !tree.isBST() {
+		t.Errorf("tree.isBST() = %v; want %v", tree.isBST(), true)
+	}
+}

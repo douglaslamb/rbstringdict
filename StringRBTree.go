@@ -172,3 +172,29 @@ func (s *StringRBTree) setRoot(node *StringNode) {
 	node.detachParent()
 	s.rootNode = node
 }
+
+// isBST tests if the tree is a valid binary
+// search tree.
+func (s *StringRBTree) isBST() bool {
+	isBST := true
+	var checkBST func(node *StringNode)
+	checkBST = func(node *StringNode) {
+		if node == nil {
+			return
+		}
+		if node.left != nil && strings.Compare(node.left.value, node.value) != -1 {
+			isBST = false
+			return
+		} else {
+			checkBST(node.left)
+		}
+		if node.right != nil && strings.Compare(node.right.value, node.value) != 1 {
+			isBST = false
+			return
+		} else {
+			checkBST(node.right)
+		}
+	}
+	checkBST(s.rootNode)
+	return isBST
+}
