@@ -114,3 +114,30 @@ func (s *StringRBTree) contains(key string) bool {
 func (s *StringRBTree) isEmpty() bool {
 	return s.rootNode == nil
 }
+
+// leftRotate rotates a node and its children to the left
+// and updates its parent
+
+func (s *StringRBTree) leftRotate(node *StringNode) {
+	// original right child
+	rightChild := node.right
+	// to left rotate you
+	if rightChild == nil {
+		return
+	}
+	// set parent reference to node's right child
+	isLeft, hasParent := node.isLeftChild()
+	if hasParent {
+		if isLeft {
+			node.parent.setLeft(rightChild)
+		} else {
+			node.parent.setRight(rightChild)
+		}
+	} else {
+		s.rootNode = rightChild
+	}
+	// set node's right child to node's orig right child's left child
+	node.setRight(rightChild.left)
+	// set right child's left child to node
+	rightChild.setLeft(node)
+}

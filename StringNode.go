@@ -23,14 +23,33 @@ func (s *StringNode) isLeftChild() (bool, bool) {
 	}
 }
 
-// setLeft sets the nodes left child.
+// setLeft sets the node's left child.
 func (s *StringNode) setLeft(node *StringNode) {
+	// add to set left and set right that they need to call setleft or setright whichever is appropriate
+	// on node's previous parent if it has one
+	if s.left != nil {
+		s.left.parent = nil
+	}
 	s.left = node
-	node.parent = s
+	if node != nil {
+		if node.parent != nil {
+			if node.parent.left == node {
+				node.parent.setLeft(nil)
+			} else {
+				node.parent.setRight(nil)
+			}
+		}
+		node.parent = s
+	}
 }
 
-// setRight sets the nodes right child.
+// setRight sets the node's right child.
 func (s *StringNode) setRight(node *StringNode) {
+	if s.right != nil {
+		s.right.parent = nil
+	}
 	s.right = node
-	node.parent = s
+	if node != nil {
+		node.parent = s
+	}
 }
