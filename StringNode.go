@@ -29,19 +29,13 @@ func (s *StringNode) setLeft(node *StringNode) {
 	if s.left != nil {
 		s.left.parent = nil
 	}
-	s.left = node
 	if node != nil {
 		// if node is already child of another node
 		// disconnect it
-		if node.parent != nil {
-			if node.parent.left == node {
-				node.parent.setLeft(nil)
-			} else {
-				node.parent.setRight(nil)
-			}
-		}
+		node.detachParent()
 		node.parent = s
 	}
+	s.left = node
 }
 
 // setRight sets the node's right child.
@@ -50,17 +44,25 @@ func (s *StringNode) setRight(node *StringNode) {
 	if s.right != nil {
 		s.right.parent = nil
 	}
-	s.right = node
 	if node != nil {
 		// if node is already child of another node
 		// disconnect it
-		if node.parent != nil {
-			if node.parent.left == node {
-				node.parent.setLeft(nil)
-			} else {
-				node.parent.setRight(nil)
-			}
-		}
+		node.detachParent()
 		node.parent = s
+	}
+	s.right = node
+}
+
+// detachParent calls setLeft or setRight on
+// node's parent if any. setLeft or setRight
+// set pointers accordingly.
+func (s *StringNode) detachParent() {
+	isLeft, hasParent := s.isLeftChild()
+	if hasParent {
+		if isLeft {
+			s.parent.setLeft(nil)
+		} else {
+			s.parent.setRight(nil)
+		}
 	}
 }

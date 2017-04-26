@@ -72,3 +72,25 @@ func TestSetRight(t *testing.T) {
 		t.Errorf("parent.setRight failed; formerParent.right = %v; want %v", formerParent.right, nil)
 	}
 }
+
+func TestDetachParent(t *testing.T) {
+	parent := &StringNode{}
+	leftChild := &StringNode{}
+	parent.setLeft(leftChild)
+	rightChild := &StringNode{}
+	parent.setRight(rightChild)
+	leftChild.detachParent()
+	rightChild.detachParent()
+	if parent.left != nil {
+		t.Errorf("detachParent failed; parent.left = %v; want %v", parent.left, nil)
+	}
+	if parent.right != nil {
+		t.Errorf("detachParent failed; parent.right = %v; want %v", parent.right, nil)
+	}
+	if leftChild.parent != nil {
+		t.Errorf("detachParent failed; leftChild.parent = %v; want %v", leftChild.parent, nil)
+	}
+	if rightChild.parent != nil {
+		t.Errorf("detachParent failed; rightChild.parent = %v; want %v", rightChild.parent, nil)
+	}
+}
