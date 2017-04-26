@@ -13,5 +13,6 @@ func (s *StringRBTree) insertBST(key string) {
 func (s *StringRBTree) remove(key string) {
 }
 
-func (s *StringRBTree) contains(key string) {
+func (s *StringRBTree) contains(key string) bool {
+	return false
 }
