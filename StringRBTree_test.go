@@ -72,3 +72,45 @@ func TestLeftRotate(t *testing.T) {
 		t.Errorf("leftRotate failed; right.left = %v; want %v", right.left, node)
 	}
 }
+
+func TestRightRotate(t *testing.T) {
+	// rotation when node has parent
+	tree := &StringRBTree{}
+	parent := &StringNode{}
+	node := &StringNode{}
+	left := &StringNode{}
+	leftRightChild := &StringNode{}
+	parent.setRight(node)
+	node.setLeft(left)
+	left.setRight(leftRightChild)
+	tree.rootNode = parent
+	tree.rightRotate(node)
+	if parent.right != left {
+		t.Errorf("rightRotate failed; parent.right = %v; want %v", parent.right, left)
+	}
+	if node.left != leftRightChild {
+		t.Errorf("rightRotate failed; node.left = %v; want %v", node.left, leftRightChild)
+	}
+	if left.right != node {
+		t.Errorf("rightRotate failed; left.right = %v; want %v", left.right, node)
+	}
+
+	// rotation when node is rootNode
+	tree = &StringRBTree{}
+	node = &StringNode{}
+	left = &StringNode{}
+	leftRightChild = &StringNode{}
+	tree.rootNode = node
+	node.setLeft(left)
+	left.setRight(leftRightChild)
+	tree.rightRotate(node)
+	if tree.rootNode != left {
+		t.Errorf("rightRotate failed; tree.rootNode = %v; want %v", tree.rootNode, left)
+	}
+	if node.left != leftRightChild {
+		t.Errorf("rightRotate failed; node.left = %v; want %v", node.left, leftRightChild)
+	}
+	if left.right != node {
+		t.Errorf("rightRotate failed; left.right = %v; want %v", left.right, node)
+	}
+}
