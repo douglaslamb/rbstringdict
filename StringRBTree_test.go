@@ -140,3 +140,64 @@ func TestIsBST(t *testing.T) {
 		t.Errorf("tree.isBST() = %v; want %v", tree.isBST(), true)
 	}
 }
+
+func TestIsRedBlackTree(t *testing.T) {
+	// not red black tree
+	// root is red
+	tree := &StringRBTree{}
+	root := &StringNode{}
+	tree.rootNode = root
+	if tree.isRedBlackTree() {
+		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), false)
+	}
+
+	// not red black tree
+	// red node with red children
+	tree = &StringRBTree{}
+	root = &StringNode{}
+	parent := &StringNode{}
+	left := &StringNode{}
+	right := &StringNode{}
+	tree.rootNode = root
+	root.isBlack = true
+	root.left = parent
+	parent.left = left
+	parent.right = right
+	if tree.isRedBlackTree() {
+		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), false)
+	}
+
+	// not red black tree
+	// unequal black heights
+	tree = &StringRBTree{}
+	root = &StringNode{}
+	left = &StringNode{}
+	tree.rootNode = root
+	root.isBlack = true
+	root.left = left
+	left.isBlack = true
+	if tree.isRedBlackTree() {
+		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), false)
+	}
+
+	// is red black tree
+	tree = &StringRBTree{}
+	root = &StringNode{}
+	parent = &StringNode{}
+	uncle := &StringNode{}
+	left = &StringNode{}
+	right = &StringNode{}
+	tree.rootNode = root
+	root.isBlack = true
+	root.left = parent
+	root.right = uncle
+	uncle.isBlack = true
+	parent.left = left
+	parent.right = right
+	left.isBlack = true
+	right.isBlack = true
+	if !tree.isRedBlackTree() {
+		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), true)
+	}
+
+}

@@ -170,10 +170,11 @@ func (s *StringRBTree) rightRotate(node *StringNode) {
 // setRoot sets rootNode to node.
 func (s *StringRBTree) setRoot(node *StringNode) {
 	node.detachParent()
+	node.isBlack = true
 	s.rootNode = node
 }
 
-// isBST tests if the tree is a valid binary
+// isBST tests that the tree is a valid binary
 // search tree.
 func (s *StringRBTree) isBST() bool {
 	isBST := true
@@ -185,16 +186,54 @@ func (s *StringRBTree) isBST() bool {
 		if node.left != nil && strings.Compare(node.left.value, node.value) != -1 {
 			isBST = false
 			return
-		} else {
-			checkBST(node.left)
 		}
 		if node.right != nil && strings.Compare(node.right.value, node.value) != 1 {
 			isBST = false
 			return
-		} else {
-			checkBST(node.right)
 		}
+		checkBST(node.right)
+		checkBST(node.left)
 	}
 	checkBST(s.rootNode)
 	return isBST
+}
+
+// isRedBlackTree tests that the tree is a valid
+// redBlackTree
+func (s *StringRBTree) isRedBlackTree() bool {
+	if !s.rootNode.isBlack {
+		return false
+	}
+	// check that each red node has two black children or nils
+	redChildrenBothBlack := true
+	sameBlackHeight := true
+
+	var checkRB func(node *StringNode) int
+	checkRB = func(node *StringNode) int {
+		if node == nil {
+			return 1
+		}
+		// check that left and right black heights are equal
+		leftHeight := checkRB(node.left)
+		rightHeight := checkRB(node.right)
+		if leftHeight != rightHeight {
+			sameBlackHeight = false
+		}
+		if !node.isBlack {
+			// check for red without two black children
+			if node.left != nil && node.right != nil {
+				if !(node.left.isBlack && node.right.isBlack) {
+					redChildrenBothBlack = false
+				}
+			} else if !(node.left == nil && node.right == nil) {
+				redChildrenBothBlack = false
+			}
+			// does not matter if we use leftHeight or rightHeight
+			return leftHeight
+		} else {
+			return leftHeight + 1
+		}
+	}
+	checkRB(s.rootNode)
+	return redChildrenBothBlack && sameBlackHeight
 }
