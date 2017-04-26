@@ -12,7 +12,9 @@ func TestInsert(t *testing.T) {
 
 func TestRemove(t *testing.T) {
 	tree := &StringRBTree{}
-	tree.insert("foo")
+	node := &StringNode{}
+	node.value = "foo"
+	tree.rootNode = node
 	tree.remove("foo")
 	if tree.contains("foo") {
 		t.Errorf("tree.contains(\"foo\") = %v; want %v", tree.contains("foo"), false)

@@ -11,8 +11,9 @@ func (s *StringRBTree) insert(key string) {
 	_ = s.insertBST(key)
 }
 
-// insertBST inserts the provided key in the dictionary.
-// If the key has already been inserted insertBST returns nil.
+// insertBST inserts the provided key in the dictionary and returns
+// the added node. If the key has already been inserted
+// insertBST returns nil.
 func (s *StringRBTree) insertBST(key string) *StringNode {
 	// BST insert
 	if s.isEmpty() {
@@ -51,9 +52,39 @@ func (s *StringRBTree) insertBST(key string) *StringNode {
 	}
 }
 
-func (s *StringRBTree) remove(key string) {
+// remove removes a key from the dictionary.
+func (s *StringRBTree) remove(key string) error {
+	// BST remove
+	currNode := s.rootNode
+	for currNode != nil {
+		comparison := strings.Compare(key, currNode.value)
+		if comparison < 0 {
+			currNode = currNode.left
+		} else if comparison > 0 {
+			currNode = currNode.right
+		} else {
+			// found key
+			// check if left or right child and set parent pointer
+			// to nil
+			isLeft, hasParent := currNode.isLeftChild()
+			if !hasParent {
+				s.rootNode = nil
+				return nil
+			}
+			if isLeft {
+				currNode.parent.left = nil
+			} else {
+				currNode.parent.right = nil
+			}
+			return nil
+		}
+	}
+	// key was not found
+	return nil
 }
 
+// contains returns true if the key is in the dictionary
+// and false otherwise.
 func (s *StringRBTree) contains(key string) bool {
 	if s.isEmpty() {
 		return false
@@ -78,6 +109,8 @@ func (s *StringRBTree) contains(key string) bool {
 	}
 }
 
+// isEmpty returns a boolean indicating whether the dictionary
+// has no keys in it.
 func (s *StringRBTree) isEmpty() bool {
 	return s.rootNode == nil
 }
