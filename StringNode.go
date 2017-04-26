@@ -1,10 +1,11 @@
 package main
 
 type StringNode struct {
-	value  string
-	left   *StringNode
-	right  *StringNode
-	parent *StringNode
+	value   string
+	left    *StringNode
+	right   *StringNode
+	parent  *StringNode
+	isBlack bool
 }
 
 // isLeftChild returns true if the node is
