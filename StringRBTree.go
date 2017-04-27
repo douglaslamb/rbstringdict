@@ -8,7 +8,13 @@ type StringRBTree struct {
 
 // insert adds a string to the dictionary.
 func (s *StringRBTree) insert(key string) {
-	_ = s.insertBST(key)
+	if key == "" {
+		return
+	}
+	node := s.insertBST(key)
+	if node != nil {
+		s.insertFixup(node)
+	}
 }
 
 // insertBST inserts the provided key in the dictionary and returns
@@ -50,6 +56,39 @@ func (s *StringRBTree) insertBST(key string) *StringNode {
 			return nil
 		}
 	}
+}
+
+// insertFixup corrects red-black tree violations resulting
+// from insertBST.
+func (s *StringRBTree) insertFixup(node *StringNode) {
+	for node.parent != nil && !node.parent.isBlack {
+		// case 1
+		uncle := node.uncle()
+		if uncle != nil && !uncle.isBlack {
+			node.parent.parent.isBlack = false
+			node.parent.isBlack = true
+			uncle.isBlack = true
+			node = node.parent.parent
+		} else {
+			// case 2
+			if node == node.parent.right && node.parent == node.parent.parent.left {
+				node = node.parent
+				s.leftRotate(node)
+			} else if node == node.parent.left && node.parent == node.parent.parent.right {
+				node = node.parent
+				s.rightRotate(node)
+			}
+			// case 3
+			node.parent.isBlack = true
+			node.parent.parent.isBlack = false
+			if node == node.parent.left {
+				s.rightRotate(node.parent.parent)
+			} else {
+				s.leftRotate(node.parent.parent)
+			}
+		}
+	}
+	s.rootNode.isBlack = true
 }
 
 // remove removes a key from the dictionary.
@@ -201,6 +240,9 @@ func (s *StringRBTree) isBST() bool {
 // isRedBlackTree tests that the tree is a valid
 // redBlackTree
 func (s *StringRBTree) isRedBlackTree() bool {
+	if s.rootNode == nil {
+		return true
+	}
 	if !s.rootNode.isBlack {
 		return false
 	}

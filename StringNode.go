@@ -66,3 +66,20 @@ func (s *StringNode) detachParent() {
 		}
 	}
 }
+
+// uncle returns the node's uncle. It returns
+// nil if node has no parent, no grandparent, or no uncle
+func (s *StringNode) uncle() *StringNode {
+	if s.parent != nil {
+		isLeft, hasGrandparent := s.parent.isLeftChild()
+		if hasGrandparent {
+			grandparent := s.parent.parent
+			if isLeft {
+				return grandparent.right
+			} else {
+				return grandparent.left
+			}
+		}
+	}
+	return nil
+}

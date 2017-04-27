@@ -10,6 +10,27 @@ func TestInsert(t *testing.T) {
 	}
 }
 
+func TestInsertFixup(t *testing.T) {
+	tree := &StringRBTree{}
+	tree.insert("m")
+	tree.insert("g")
+	tree.insert("b")
+	tree.insert("d")
+	tree.insert("k")
+	tree.insert("jkdk")
+	tree.insert("h")
+	tree.insert("t")
+	tree.insert("q")
+	tree.insert("w")
+	tree.insert("y")
+	tree.insert("t")
+	tree.insert("z")
+	tree.insert("w")
+	if !tree.isRedBlackTree() {
+		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), true)
+	}
+}
+
 func TestRemove(t *testing.T) {
 	tree := &StringRBTree{}
 	node := &StringNode{}
