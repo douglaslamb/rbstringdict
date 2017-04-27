@@ -92,7 +92,7 @@ func (s *StringRBTree) insertFixup(node *StringNode) {
 }
 
 // remove removes a key from the dictionary.
-func (s *StringRBTree) remove(key string) error {
+func (s *StringRBTree) remove(key string) {
 	// BST remove
 	currNode := s.rootNode
 	for currNode != nil {
@@ -103,23 +103,41 @@ func (s *StringRBTree) remove(key string) error {
 			currNode = currNode.right
 		} else {
 			// found key
-			// check if left or right child and set parent pointer
-			// to nil
-			isLeft, hasParent := currNode.isLeftChild()
-			if !hasParent {
-				s.rootNode = nil
-				return nil
-			}
-			if isLeft {
-				currNode.parent.left = nil
+			if currNode.left != nil && currNode.right != nil {
+				// two children
+				successor := s.successor(currNode)
+				currNode.value = successor.value
+				s.easyRemove(successor)
 			} else {
-				currNode.parent.right = nil
+				s.easyRemove(currNode)
 			}
-			return nil
+			currNode = nil
 		}
 	}
-	// key was not found
-	return nil
+}
+
+// easyRemove deletes the given node as long as
+// the node has less than two children. Otherwise
+// easyRemove does nothing.
+func (s *StringRBTree) easyRemove(node *StringNode) {
+	if node.left != nil && node.right != nil {
+		return
+	}
+	var replacer *StringNode
+	if node.left != nil {
+		replacer = node.left
+	} else if node.right != nil {
+		replacer = node.right
+	}
+	if node.parent != nil {
+		if node.parent.left == node {
+			node.parent.setLeft(replacer)
+		} else {
+			node.parent.setRight(replacer)
+		}
+	} else {
+		s.setRoot(replacer)
+	}
 }
 
 // contains returns true if the key is in the dictionary
@@ -164,9 +182,8 @@ func (s *StringRBTree) leftRotate(node *StringNode) {
 		return
 	}
 	// set parent reference to node's right child
-	isLeft, hasParent := node.isLeftChild()
-	if hasParent {
-		if isLeft {
+	if node.parent != nil {
+		if node.parent.left == node {
 			node.parent.setLeft(rightChild)
 		} else {
 			node.parent.setRight(rightChild)
@@ -190,9 +207,8 @@ func (s *StringRBTree) rightRotate(node *StringNode) {
 		return
 	}
 	// set parent reference to node's left child
-	isLeft, hasParent := node.isLeftChild()
-	if hasParent {
-		if isLeft {
+	if node.parent != nil {
+		if node.parent.left == node {
 			node.parent.setLeft(leftChild)
 		} else {
 			node.parent.setRight(leftChild)
@@ -208,9 +224,13 @@ func (s *StringRBTree) rightRotate(node *StringNode) {
 
 // setRoot sets rootNode to node.
 func (s *StringRBTree) setRoot(node *StringNode) {
-	node.detachParent()
-	node.isBlack = true
-	s.rootNode = node
+	if node == nil {
+		s.rootNode = nil
+	} else {
+		node.detachParent()
+		node.isBlack = true
+		s.rootNode = node
+	}
 }
 
 // isBST tests that the tree is a valid binary
@@ -278,4 +298,17 @@ func (s *StringRBTree) isRedBlackTree() bool {
 	}
 	checkRB(s.rootNode)
 	return redChildrenBothBlack && sameBlackHeight
+}
+
+// successor returns a node's in-order successor.
+// It returns nil if non exists.
+func (s *StringRBTree) successor(node *StringNode) *StringNode {
+	if node == nil || node.right == nil {
+		return nil
+	}
+	currNode := node.right
+	for currNode.left != nil {
+		currNode = currNode.left
+	}
+	return currNode
 }

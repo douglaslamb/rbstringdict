@@ -8,21 +8,6 @@ type StringNode struct {
 	isBlack bool
 }
 
-// isLeftChild returns true if the node is
-// its parent's left child. It returns false
-// if the node is its parent's right child. The
-// second return value is false if parent is nil.
-func (s *StringNode) isLeftChild() (bool, bool) {
-	if s.parent == nil {
-		return false, false
-	}
-	if s.parent.left == s {
-		return true, true
-	} else {
-		return false, true
-	}
-}
-
 // setLeft sets the node's left child.
 func (s *StringNode) setLeft(node *StringNode) {
 	// disconnect left child
@@ -57,9 +42,8 @@ func (s *StringNode) setRight(node *StringNode) {
 // node's parent if any. setLeft or setRight
 // set pointers accordingly.
 func (s *StringNode) detachParent() {
-	isLeft, hasParent := s.isLeftChild()
-	if hasParent {
-		if isLeft {
+	if s.parent != nil {
+		if s.parent.left == s {
 			s.parent.setLeft(nil)
 		} else {
 			s.parent.setRight(nil)
@@ -70,15 +54,11 @@ func (s *StringNode) detachParent() {
 // uncle returns the node's uncle. It returns
 // nil if node has no parent, no grandparent, or no uncle
 func (s *StringNode) uncle() *StringNode {
-	if s.parent != nil {
-		isLeft, hasGrandparent := s.parent.isLeftChild()
-		if hasGrandparent {
-			grandparent := s.parent.parent
-			if isLeft {
-				return grandparent.right
-			} else {
-				return grandparent.left
-			}
+	if s.parent != nil && s.parent.parent != nil {
+		if s.parent == s.parent.parent.left {
+			return s.parent.parent.right
+		} else {
+			return s.parent.parent.left
 		}
 	}
 	return nil

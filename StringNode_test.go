@@ -2,33 +2,6 @@ package main
 
 import "testing"
 
-func TestIsLeftChild(t *testing.T) {
-	// is left child
-	parent := &StringNode{}
-	child := &StringNode{}
-	parent.left = child
-	child.parent = parent
-	isLeft, ok := child.isLeftChild()
-	if !ok || !isLeft {
-		t.Errorf("child.isLeftChild() = (%v, %v); want true, true)", isLeft, ok)
-	}
-	// is right child
-	parent = &StringNode{}
-	child = &StringNode{}
-	parent.right = child
-	child.parent = parent
-	isLeft, ok = child.isLeftChild()
-	if !ok || isLeft {
-		t.Errorf("child.isLeftChild() = (%v, %v); want false, true)", isLeft, ok)
-	}
-	// has no parent
-	child = &StringNode{}
-	isLeft, ok = child.isLeftChild()
-	if ok {
-		t.Errorf("child.isLeftChild() = (%v, %v); want false, false)", isLeft, ok)
-	}
-}
-
 func TestSetLeft(t *testing.T) {
 	parent := &StringNode{}
 	formerChild := &StringNode{}
