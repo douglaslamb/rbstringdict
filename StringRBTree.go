@@ -115,6 +115,8 @@ func (s *StringRBTree) insertFixup(node *StringNode) {
 // remove removes a key from the dictionary.
 func (s *StringRBTree) remove(key string) {
 	// BST remove
+	var extraBlack *StringNode
+	var parent *StringNode
 	currNode := s.rootNode
 	for currNode != s.dummy {
 		comparison := strings.Compare(key, currNode.value)
@@ -130,6 +132,8 @@ func (s *StringRBTree) remove(key string) {
 				currNode.value = successor.value
 				currNode = successor
 			}
+			// remeber parent if we need to do fixup
+			parent = currNode.parent
 			// one or zero children delete procedure
 			replacer := s.dummy
 			if currNode.left != s.dummy {
@@ -146,7 +150,65 @@ func (s *StringRBTree) remove(key string) {
 			} else {
 				s.setRoot(replacer)
 			}
+			if currNode.isBlack {
+				// set to trigger fixup remove
+				extraBlack = replacer
+			}
 			currNode = s.dummy
+		}
+	}
+	if extraBlack != nil {
+		for extraBlack != s.rootNode && extraBlack.isBlack {
+			if extraBlack == parent.left {
+				sibling := parent.right
+				if !sibling.isBlack {
+					sibling.isBlack = true
+					parent.isBlack = false
+					s.leftRotate(parent)
+					sibling = parent.left
+				}
+				if sibling.left.isBlack && sibling.right.isBlack {
+					sibling.isBlack = false
+					extraBlack = parent
+				} else {
+					if sibling.right.isBlack {
+						sibling.left.isBlack = true
+						sibling.isBlack = false
+						s.rightRotate(sibling)
+						sibling = parent.right
+					}
+					sibling.isBlack = parent.isBlack
+					parent.isBlack = true
+					sibling.right.isBlack = true
+					s.leftRotate(parent)
+					extraBlack = s.rootNode
+				}
+			} else {
+				sibling := parent.left
+				if !sibling.isBlack {
+					sibling.isBlack = true
+					parent.isBlack = false
+					s.rightRotate(parent)
+					sibling = parent.right
+				}
+				if sibling.left.isBlack && sibling.right.isBlack {
+					sibling.isBlack = false
+					extraBlack = parent
+				} else {
+					if sibling.left.isBlack {
+						sibling.right.isBlack = true
+						sibling.isBlack = false
+						s.leftRotate(sibling)
+						sibling = parent.left
+					}
+					sibling.isBlack = parent.isBlack
+					parent.isBlack = true
+					sibling.left.isBlack = true
+					s.rightRotate(parent)
+					extraBlack = s.rootNode
+				}
+			}
+			extraBlack.isBlack = true
 		}
 	}
 }

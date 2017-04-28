@@ -40,6 +40,17 @@ func TestRemove(t *testing.T) {
 	if tree.contains("foo") {
 		t.Errorf("tree.contains(\"foo\") = %v; want %v", tree.contains("foo"), false)
 	}
+
+	// breaks red black tree
+	tree = NewStringRBTree()
+	tree.insert("w")
+	tree.insert("c")
+	tree.insert("a")
+	tree.insert("b")
+	tree.remove("w")
+	if !tree.isRedBlackTree() {
+		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), true)
+	}
 }
 
 func TestContains(t *testing.T) {
