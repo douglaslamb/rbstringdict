@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestInsert(t *testing.T) {
-	tree := &StringRBTree{}
+	tree := NewStringRBTree()
 	tree.insert("foo")
 	if tree.rootNode.value != "foo" {
 		t.Errorf("tree.contains(\"foo\") = %v; want %v", tree.contains("foo"), true)
@@ -11,7 +11,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestInsertFixup(t *testing.T) {
-	tree := &StringRBTree{}
+	tree := NewStringRBTree()
 	tree.insert("m")
 	tree.insert("g")
 	tree.insert("b")
@@ -32,10 +32,10 @@ func TestInsertFixup(t *testing.T) {
 }
 
 func TestRemove(t *testing.T) {
-	tree := &StringRBTree{}
-	node := &StringNode{}
+	tree := NewStringRBTree()
+	node := tree.newStringNode()
 	node.value = "foo"
-	tree.rootNode = node
+	tree.setRoot(node)
 	tree.remove("foo")
 	if tree.contains("foo") {
 		t.Errorf("tree.contains(\"foo\") = %v; want %v", tree.contains("foo"), false)
@@ -43,8 +43,8 @@ func TestRemove(t *testing.T) {
 }
 
 func TestContains(t *testing.T) {
-	tree := &StringRBTree{}
-	node := &StringNode{}
+	tree := NewStringRBTree()
+	node := tree.newStringNode()
 	node.value = "foo"
 	tree.rootNode = node
 	if !tree.contains("foo") {
@@ -54,14 +54,14 @@ func TestContains(t *testing.T) {
 
 func TestLeftRotate(t *testing.T) {
 	// rotation when node has parent
-	tree := &StringRBTree{}
-	parent := &StringNode{}
-	node := &StringNode{}
-	right := &StringNode{}
-	rightLeftChild := &StringNode{}
-	parent.setLeft(node)
-	node.setRight(right)
-	right.setLeft(rightLeftChild)
+	tree := NewStringRBTree()
+	parent := tree.newStringNode()
+	node := tree.newStringNode()
+	right := tree.newStringNode()
+	rightLeftChild := tree.newStringNode()
+	tree.setLeft(parent, node)
+	tree.setRight(node, right)
+	tree.setLeft(right, rightLeftChild)
 	tree.rootNode = parent
 	tree.leftRotate(node)
 	if parent.left != right {
@@ -75,13 +75,13 @@ func TestLeftRotate(t *testing.T) {
 	}
 
 	// rotation when node is rootNode
-	tree = &StringRBTree{}
-	node = &StringNode{}
-	right = &StringNode{}
-	rightLeftChild = &StringNode{}
+	tree = NewStringRBTree()
+	node = tree.newStringNode()
+	right = tree.newStringNode()
+	rightLeftChild = tree.newStringNode()
 	tree.rootNode = node
-	node.setRight(right)
-	right.setLeft(rightLeftChild)
+	tree.setRight(node, right)
+	tree.setLeft(right, rightLeftChild)
 	tree.leftRotate(node)
 	if tree.rootNode != right {
 		t.Errorf("leftRotate failed; tree.rootNode = %v; want %v", tree.rootNode, right)
@@ -96,14 +96,14 @@ func TestLeftRotate(t *testing.T) {
 
 func TestRightRotate(t *testing.T) {
 	// rotation when node has parent
-	tree := &StringRBTree{}
-	parent := &StringNode{}
-	node := &StringNode{}
-	left := &StringNode{}
-	leftRightChild := &StringNode{}
-	parent.setRight(node)
-	node.setLeft(left)
-	left.setRight(leftRightChild)
+	tree := NewStringRBTree()
+	parent := tree.newStringNode()
+	node := tree.newStringNode()
+	left := tree.newStringNode()
+	leftRightChild := tree.newStringNode()
+	tree.setRight(parent, node)
+	tree.setLeft(node, left)
+	tree.setRight(left, leftRightChild)
 	tree.rootNode = parent
 	tree.rightRotate(node)
 	if parent.right != left {
@@ -117,13 +117,13 @@ func TestRightRotate(t *testing.T) {
 	}
 
 	// rotation when node is rootNode
-	tree = &StringRBTree{}
-	node = &StringNode{}
-	left = &StringNode{}
-	leftRightChild = &StringNode{}
+	tree = NewStringRBTree()
+	node = tree.newStringNode()
+	left = tree.newStringNode()
+	leftRightChild = tree.newStringNode()
 	tree.rootNode = node
-	node.setLeft(left)
-	left.setRight(leftRightChild)
+	tree.setLeft(node, left)
+	tree.setRight(left, leftRightChild)
 	tree.rightRotate(node)
 	if tree.rootNode != left {
 		t.Errorf("rightRotate failed; tree.rootNode = %v; want %v", tree.rootNode, left)
@@ -138,10 +138,10 @@ func TestRightRotate(t *testing.T) {
 
 func TestIsBST(t *testing.T) {
 	// not BST
-	tree := &StringRBTree{}
-	root := &StringNode{}
+	tree := NewStringRBTree()
+	root := tree.newStringNode()
 	root.value = `f`
-	left := &StringNode{}
+	left := tree.newStringNode()
 	left.value = `z`
 	tree.rootNode = root
 	root.left = left
@@ -150,10 +150,10 @@ func TestIsBST(t *testing.T) {
 	}
 
 	// is BST
-	tree = &StringRBTree{}
-	root = &StringNode{}
+	tree = NewStringRBTree()
+	root = tree.newStringNode()
 	root.value = `f`
-	left = &StringNode{}
+	left = tree.newStringNode()
 	left.value = `a`
 	tree.rootNode = root
 	root.left = left
@@ -165,8 +165,8 @@ func TestIsBST(t *testing.T) {
 func TestIsRedBlackTree(t *testing.T) {
 	// not red black tree
 	// root is red
-	tree := &StringRBTree{}
-	root := &StringNode{}
+	tree := NewStringRBTree()
+	root := tree.newStringNode()
 	tree.rootNode = root
 	if tree.isRedBlackTree() {
 		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), false)
@@ -174,11 +174,11 @@ func TestIsRedBlackTree(t *testing.T) {
 
 	// not red black tree
 	// red node with red children
-	tree = &StringRBTree{}
-	root = &StringNode{}
-	parent := &StringNode{}
-	left := &StringNode{}
-	right := &StringNode{}
+	tree = NewStringRBTree()
+	root = tree.newStringNode()
+	parent := tree.newStringNode()
+	left := tree.newStringNode()
+	right := tree.newStringNode()
 	tree.rootNode = root
 	root.isBlack = true
 	root.left = parent
@@ -190,9 +190,9 @@ func TestIsRedBlackTree(t *testing.T) {
 
 	// not red black tree
 	// unequal black heights
-	tree = &StringRBTree{}
-	root = &StringNode{}
-	left = &StringNode{}
+	tree = NewStringRBTree()
+	root = tree.newStringNode()
+	left = tree.newStringNode()
 	tree.rootNode = root
 	root.isBlack = true
 	root.left = left
@@ -202,12 +202,12 @@ func TestIsRedBlackTree(t *testing.T) {
 	}
 
 	// is red black tree
-	tree = &StringRBTree{}
-	root = &StringNode{}
-	parent = &StringNode{}
-	uncle := &StringNode{}
-	left = &StringNode{}
-	right = &StringNode{}
+	tree = NewStringRBTree()
+	root = tree.newStringNode()
+	parent = tree.newStringNode()
+	uncle := tree.newStringNode()
+	left = tree.newStringNode()
+	right = tree.newStringNode()
 	tree.rootNode = root
 	root.isBlack = true
 	root.left = parent
@@ -220,5 +220,73 @@ func TestIsRedBlackTree(t *testing.T) {
 	if !tree.isRedBlackTree() {
 		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), true)
 	}
+}
 
+func TestSetLeft(t *testing.T) {
+	tree := NewStringRBTree()
+	parent := tree.newStringNode()
+	formerChild := tree.newStringNode()
+	tree.setLeft(parent, formerChild)
+	child := tree.newStringNode()
+	formerParent := tree.newStringNode()
+	tree.setLeft(formerParent, child)
+	tree.setLeft(parent, child)
+	if parent.left != child {
+		t.Errorf("setLeft failed; parent.left = %v; want %v", parent.left, child)
+	}
+	if child.parent != parent {
+		t.Errorf("setLeft failed; child.parent = %v; want %v", child.parent, parent)
+	}
+	if formerChild.parent != tree.dummy {
+		t.Errorf("setLeft failed; formerChild.parent = %v; want %v", formerChild.parent, tree.dummy)
+	}
+	if formerParent.left != tree.dummy {
+		t.Errorf("setLeft failed; formerParent.left = %v; want %v", formerParent.left, tree.dummy)
+	}
+}
+
+func TestSetRight(t *testing.T) {
+	tree := NewStringRBTree()
+	parent := tree.newStringNode()
+	formerChild := tree.newStringNode()
+	tree.setRight(parent, formerChild)
+	child := tree.newStringNode()
+	formerParent := tree.newStringNode()
+	tree.setRight(formerParent, child)
+	tree.setRight(parent, child)
+	if parent.right != child {
+		t.Errorf("setRight failed; parent.right = %v; want %v", parent.right, child)
+	}
+	if child.parent != parent {
+		t.Errorf("setRight failed; child.parent = %v; want %v", child.parent, parent)
+	}
+	if formerChild.parent != tree.dummy {
+		t.Errorf("setRight failed; formerChild.parent = %v; want %v", formerChild.parent, tree.dummy)
+	}
+	if formerParent.right != tree.dummy {
+		t.Errorf("setRight failed; formerParent.right = %v; want %v", formerParent.right, tree.dummy)
+	}
+}
+
+func TestDetachParent(t *testing.T) {
+	tree := NewStringRBTree()
+	parent := tree.newStringNode()
+	leftChild := tree.newStringNode()
+	tree.setLeft(parent, leftChild)
+	rightChild := tree.newStringNode()
+	tree.setRight(parent, rightChild)
+	tree.detachParent(leftChild)
+	tree.detachParent(rightChild)
+	if parent.left != tree.dummy {
+		t.Errorf("detachParent failed; parent.left = %v; want %v", parent.left, tree.dummy)
+	}
+	if parent.right != tree.dummy {
+		t.Errorf("detachParent failed; parent.right = %v; want %v", parent.right, tree.dummy)
+	}
+	if leftChild.parent != tree.dummy {
+		t.Errorf("detachParent failed; leftChild.parent = %v; want %v", leftChild.parent, tree.dummy)
+	}
+	if rightChild.parent != tree.dummy {
+		t.Errorf("detachParent failed; rightChild.parent = %v; want %v", rightChild.parent, tree.dummy)
+	}
 }
