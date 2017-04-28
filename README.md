@@ -1,5 +1,7 @@
 # rbstringdict
-A red-black tree dictionary written in Go. It is compatible only with strings.
+A red-black tree dictionary written in Go. It is compatible only with strings. 
+
+A red-black tree is a binary search tree that balances itself. That is, after insertion and deletion it rearranges nodes to balance the tree.
 
 ## Install
 `go get github.com/douglaslamb/rbstringdict`
