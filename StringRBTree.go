@@ -27,8 +27,8 @@ func (s *StringRBTree) newStringNode() *StringNode {
 	return node
 }
 
-// insert adds a string to the dictionary.
-func (s *StringRBTree) insert(key string) {
+// Insert adds a string to the dictionary.
+func (s *StringRBTree) Insert(key string) {
 	if key == "" {
 		return
 	}
@@ -112,8 +112,8 @@ func (s *StringRBTree) insertFixup(node *StringNode) {
 	s.rootNode.isBlack = true
 }
 
-// remove removes a key from the dictionary.
-func (s *StringRBTree) remove(key string) {
+// Remove removes a key from the dictionary.
+func (s *StringRBTree) Remove(key string) {
 	// BST remove
 	var extraBlack *StringNode
 	var parent *StringNode
@@ -213,9 +213,9 @@ func (s *StringRBTree) remove(key string) {
 	}
 }
 
-// contains returns true if the key is in the dictionary
+// Contains returns true if the key is in the dictionary
 // and false otherwise.
-func (s *StringRBTree) contains(key string) bool {
+func (s *StringRBTree) Contains(key string) bool {
 	if s.isEmpty() {
 		return false
 	}

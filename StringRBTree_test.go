@@ -4,28 +4,28 @@ import "testing"
 
 func TestInsert(t *testing.T) {
 	tree := NewStringRBTree()
-	tree.insert("foo")
+	tree.Insert("foo")
 	if tree.rootNode.value != "foo" {
-		t.Errorf("tree.contains(\"foo\") = %v; want %v", tree.contains("foo"), true)
+		t.Errorf("tree.Contains(\"foo\") = %v; want %v", tree.Contains("foo"), true)
 	}
 }
 
 func TestInsertFixup(t *testing.T) {
 	tree := NewStringRBTree()
-	tree.insert("m")
-	tree.insert("g")
-	tree.insert("b")
-	tree.insert("d")
-	tree.insert("k")
-	tree.insert("jkdk")
-	tree.insert("h")
-	tree.insert("t")
-	tree.insert("q")
-	tree.insert("w")
-	tree.insert("y")
-	tree.insert("t")
-	tree.insert("z")
-	tree.insert("w")
+	tree.Insert("m")
+	tree.Insert("g")
+	tree.Insert("b")
+	tree.Insert("d")
+	tree.Insert("k")
+	tree.Insert("jkdk")
+	tree.Insert("h")
+	tree.Insert("t")
+	tree.Insert("q")
+	tree.Insert("w")
+	tree.Insert("y")
+	tree.Insert("t")
+	tree.Insert("z")
+	tree.Insert("w")
 	if !tree.isRedBlackTree() {
 		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), true)
 	}
@@ -36,18 +36,18 @@ func TestRemove(t *testing.T) {
 	node := tree.newStringNode()
 	node.value = "foo"
 	tree.setRoot(node)
-	tree.remove("foo")
-	if tree.contains("foo") {
-		t.Errorf("tree.contains(\"foo\") = %v; want %v", tree.contains("foo"), false)
+	tree.Remove("foo")
+	if tree.Contains("foo") {
+		t.Errorf("tree.Contains(\"foo\") = %v; want %v", tree.Contains("foo"), false)
 	}
 
 	// breaks red black tree
 	tree = NewStringRBTree()
-	tree.insert("w")
-	tree.insert("c")
-	tree.insert("a")
-	tree.insert("b")
-	tree.remove("w")
+	tree.Insert("w")
+	tree.Insert("c")
+	tree.Insert("a")
+	tree.Insert("b")
+	tree.Remove("w")
 	if !tree.isRedBlackTree() {
 		t.Errorf("tree.isRedBlackTree() = %v; want %v", tree.isRedBlackTree(), true)
 	}
@@ -58,8 +58,8 @@ func TestContains(t *testing.T) {
 	node := tree.newStringNode()
 	node.value = "foo"
 	tree.rootNode = node
-	if !tree.contains("foo") {
-		t.Errorf("tree.contains(\"foo\") = %v; want %v", tree.contains("foo"), true)
+	if !tree.Contains("foo") {
+		t.Errorf("tree.Contains(\"foo\") = %v; want %v", tree.Contains("foo"), true)
 	}
 }
 
