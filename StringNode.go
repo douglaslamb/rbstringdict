@@ -1,4 +1,4 @@
-package main
+package rbstringdict
 
 type StringNode struct {
 	value       string
